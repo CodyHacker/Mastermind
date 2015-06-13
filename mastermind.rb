@@ -27,6 +27,10 @@ private
   
 end
 
+class CodeBreaker
+
+end
+
 code_maker1 = CodeMaker.new
 code_maker2 = CodeMaker.new
 
