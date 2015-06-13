@@ -47,11 +47,17 @@ class CodeCompareFeedback
 
   def correct_items_only
     array1, array2 = @codemaker_code.zip(@guessed_code).delete_if { |a, b| a == b }.transpose
-    if array1 || array2
-      (array1 & array2).count
-    else
-      0
+    counter = 0
+    array1.each do |x| 
+      counter += 1 if array2.include?(x)
     end
+    counter
+
+    # if array1 || array2
+    #   (array1 & array2).count
+    # else
+    #   0
+    # end
   end
 
   def to_s
@@ -63,16 +69,23 @@ end
 
 CODE_MAKER_CODE = CodeMaker.new.make_code
 
-12.times do
+12.times do |guess|
   print "Enter your guess (ex. 0,1,4,5):  "
   my_guess = gets.chomp.split(",").map(&:to_i)
-  puts my_guess
-  p my_guess
+  # puts my_guess
+  # p my_guess
   code_comparison = CodeCompareFeedback.new(my_guess, CODE_MAKER_CODE)
-  puts "There are #{code_comparison.correct_items_correct_position} correct items in the correct position, there are #{code_comparison.correct_items_only} correct items NOT in the correct position"
-  puts "My guess: #{my_guess}, Codemaker code: #{CODE_MAKER_CODE}"
-
+  if code_comparison.correct_items_correct_position == my_guess.length
+    puts
+    puts "You guessed the code, #{CODE_MAKER_CODE}!"
+    puts
+    exit
+  end
+  puts "On guess number: #{guess + 1}, there are #{code_comparison.correct_items_correct_position} correct items in the correct position, there are #{code_comparison.correct_items_only} correct items NOT in the correct position"
+  puts "My guess: #{my_guess}, Codemaker code: #{CODE_MAKER_CODE} <----- For Debugging Only!"
 end
+puts "I'm sorry, you did not guess the code, #{CODE_MAKER_CODE}, within the alotted 12 tries."
+
 
 # code_maker = CodeMaker.new.make_code
 #  code_guesser = CodeCompareFeedback.new([1,3,2,5],code_maker)
