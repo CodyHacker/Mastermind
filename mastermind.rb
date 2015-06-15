@@ -71,17 +71,15 @@ class HumanCodeBreaker
     @number_of_colors = @my_code_maker.number_of_colors
     @number_of_pins = @my_code_maker.number_of_pins
     @number_of_tries = number_of_tries
+    @code_comparison = CodeCompareFeedback.new(nil, @code_maker_code)
   end
 
   def play_game
     welcome_the_player
     @number_of_tries.times do |guess_number|
-      @my_guess = ''
-      until @my_guess.length == @number_of_pins && @my_guess.all? {|element| element.between?(1, @number_of_colors)}
-        print 'Enter your guess: '
-        @my_guess = gets.chomp.scan(/\d/)[0,@number_of_pins].map(&:to_i)
-      end
-      @code_comparison = CodeCompareFeedback.new(@my_guess, @code_maker_code)
+      @my_guess = get_the_guess
+      @code_comparison.guessed_code = @my_guess
+      # @code_comparison = CodeCompareFeedback.new(@my_guess, @code_maker_code)
       @code_comparison.correct_items_correct_position == @my_guess.length ? message_player_wins(guess_number) : message_guess_feedback(guess_number)
     end
     message_player_loses
@@ -113,8 +111,17 @@ class HumanCodeBreaker
     exit
   end
 
+  def get_the_guess
+    my_guess = ''
+    until my_guess.length == @number_of_pins && my_guess.all? {|element| element.between?(1, @number_of_colors)}
+      print 'Enter your guess: '
+      my_guess = gets.chomp.scan(/\d/)[0,@number_of_pins].map(&:to_i)
+    end
+    my_guess
+  end
+
 end
 
-new_game = HumanCodeBreaker.new(2)
+new_game = HumanCodeBreaker.new
 new_game.play_game
 
