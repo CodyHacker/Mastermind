@@ -79,7 +79,6 @@ class HumanCodeBreaker
     @number_of_tries.times do |guess_number|
       @my_guess = get_the_guess
       @code_comparison.guessed_code = @my_guess
-      # @code_comparison = CodeCompareFeedback.new(@my_guess, @code_maker_code)
       @code_comparison.correct_items_correct_position == @my_guess.length ? message_player_wins(guess_number) : message_guess_feedback(guess_number)
     end
     message_player_loses
@@ -99,7 +98,7 @@ class HumanCodeBreaker
 
   def message_guess_feedback(guess_number)
     puts
-    puts "On guess number: #{guess_number + 1}, there are #{@code_comparison.correct_items_correct_position} correct items in the correct position and there are #{@code_comparison.correct_items_only} correct items NOT in the correct position."
+    puts "On try number: #{guess_number + 1}, there are #{@code_comparison.correct_items_correct_position} correct items in the correct position and there are #{@code_comparison.correct_items_only} correct items NOT in the correct position."
     puts "My guess: #{@my_guess}, Codemaker code: #{@code_maker_code} <----- For Debugging Only!"
     puts
   end
