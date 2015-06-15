@@ -74,31 +74,47 @@ class HumanCodeBreaker
   end
 
   def play_game
-    puts "Code is #{@number_of_pins} digits long and consists of the digits 1 - #{@number_of_colors}"
+    welcome_the_player
     @number_of_tries.times do |guess_number|
-      my_guess = ''
-      until my_guess.length == @number_of_pins && my_guess.all? {|element| element.between?(1, @number_of_colors)}
+      @my_guess = ''
+      until @my_guess.length == @number_of_pins && @my_guess.all? {|element| element.between?(1, @number_of_colors)}
         print 'Enter your guess: '
-        my_guess = gets.chomp.scan(/\d/)[0,@number_of_pins].map(&:to_i)
+        @my_guess = gets.chomp.scan(/\d/)[0,@number_of_pins].map(&:to_i)
       end
-      puts
-      code_comparison = CodeCompareFeedback.new(my_guess, @code_maker_code)
-      if code_comparison.correct_items_correct_position == my_guess.length
-        puts
-        puts "You guessed the code, #{@code_maker_code}, in #{guess_number + 1} tries!"
-        puts
-        exit
-      end
-      puts "On guess number: #{guess_number + 1}, there are #{code_comparison.correct_items_correct_position} correct items in the correct position and there are #{code_comparison.correct_items_only} correct items NOT in the correct position"
-      puts "My guess: #{my_guess}, Codemaker code: #{@code_maker_code} <----- For Debugging Only!"
-      puts
+      @code_comparison = CodeCompareFeedback.new(@my_guess, @code_maker_code)
+      @code_comparison.correct_items_correct_position == @my_guess.length ? message_player_wins(guess_number) : message_guess_feedback(guess_number)
     end
+    message_player_loses
+  end
+
+
+  private
+  def welcome_the_player
+    puts 'Welcome to Mastermind!'
+    puts "The Secret Code is #{@number_of_pins} digits long and consists of the digits 1 - #{@number_of_colors}. You have #{@number_of_tries} tries to try to guess it. Good luck!"
+  end
+
+  def message_player_loses
     puts
     puts "I'm sorry, you did not guess the code, #{@code_maker_code}, within the allotted #{@number_of_tries} tries."
   end
 
+  def message_guess_feedback(guess_number)
+    puts
+    puts "On guess number: #{guess_number + 1}, there are #{@code_comparison.correct_items_correct_position} correct items in the correct position and there are #{@code_comparison.correct_items_only} correct items NOT in the correct position."
+    puts "My guess: #{@my_guess}, Codemaker code: #{@code_maker_code} <----- For Debugging Only!"
+    puts
+  end
+
+  def message_player_wins(guess_number)
+    puts
+    puts "You guessed the code, #{@code_maker_code}, in #{guess_number + 1} tries!"
+    puts
+    exit
+  end
+
 end
 
-new_game = HumanCodeBreaker.new
+new_game = HumanCodeBreaker.new(2)
 new_game.play_game
 
