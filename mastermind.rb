@@ -59,28 +59,33 @@ class CodeCompareFeedback
 
 end
 
-
-CODE_MAKER_CODE = CodeMaker.new.make_code
-
-12.times do |guess|
-  print "Enter your guess (ex. 1,2,3,6):  "
-  my_guess = gets.chomp.split(',').map(&:to_i)
-  # puts my_guess
-  # p my_guess
-  code_comparison = CodeCompareFeedback.new(my_guess, CODE_MAKER_CODE)
-  if code_comparison.correct_items_correct_position == my_guess.length
-    puts
-    puts "You guessed the code, #{CODE_MAKER_CODE}!"
-    puts
-    exit
+class HumanCodeBreaker
+  def initialize
+    @code_maker_code = CodeMaker.new.make_code
   end
-  puts "On guess number: #{guess + 1}, there are #{code_comparison.correct_items_correct_position} correct items in the correct position and there are #{code_comparison.correct_items_only} correct items NOT in the correct position"
-  puts "My guess: #{my_guess}, Codemaker code: #{CODE_MAKER_CODE} <----- For Debugging Only!"
-  puts
+
+  def play_game
+    12.times do |guess|
+      print "Enter your guess (ex. 1,2,3,6): "
+      my_guess = gets.chomp.scan(/\d/)[0,4].map(&:to_i)
+      puts
+      code_comparison = CodeCompareFeedback.new(my_guess, @code_maker_code)
+      if code_comparison.correct_items_correct_position == my_guess.length
+        puts
+        puts "You guessed the code, #{@code_maker_code}!"
+        puts
+        exit
+      end
+      puts "On guess number: #{guess + 1}, there are #{code_comparison.correct_items_correct_position} correct items in the correct position and there are #{code_comparison.correct_items_only} correct items NOT in the correct position"
+      puts "My guess: #{my_guess}, Codemaker code: #{@code_maker_code} <----- For Debugging Only!"
+      puts
+    end
+    puts
+    puts "I'm sorry, you did not guess the code, #{@code_maker_code}, within the allotted 12 tries."
+  end
+
 end
-puts
-puts "I'm sorry, you did not guess the code, #{CODE_MAKER_CODE}, within the allotted 12 tries."
 
-
-
+new_game = HumanCodeBreaker.new
+new_game.play_game
 
