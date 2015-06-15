@@ -48,7 +48,9 @@ class CodeCompareFeedback
   def correct_items_only
     array1, array2 = @codemaker_code.zip(@guessed_code).delete_if { |a, b| a == b }.transpose
 
-    # Thank you, Suslov from StackOverflow, for this beautiful little bit
+    # (Multiset.new(array1) & Multiset.new(array2)).size if multiset gem were to be used.
+
+    # Thank you, Suslov from StackOverflow, for this beautiful little bit (no gem reliance)
 
     array1.select{|e| (index = array2.index(e) and array2.delete_at index)}.count
   end
@@ -75,7 +77,7 @@ class HumanCodeBreaker
     puts "Code is #{@number_of_pins} digits long and consists of the digits 1 - #{@number_of_colors}"
     @number_of_tries.times do |guess_number|
       my_guess = ''
-      until my_guess.length == @number_of_pins
+      until my_guess.length == @number_of_pins && my_guess.all? {|element| element.between?(1, @number_of_colors)}
         print 'Enter your guess: '
         my_guess = gets.chomp.scan(/\d/)[0,@number_of_pins].map(&:to_i)
       end
