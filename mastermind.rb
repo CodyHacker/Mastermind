@@ -60,28 +60,32 @@ class CodeCompareFeedback
 end
 
 class HumanCodeBreaker
-  def initialize
+
+  attr_writer :number_of_tries
+
+  def initialize(number_of_tries=12)
     @code_maker_code = CodeMaker.new.make_code
+    @number_of_tries = number_of_tries
   end
 
   def play_game
-    12.times do |guess|
+    @number_of_tries.times do |guess_number|
       print "Enter your guess (ex. 1,2,3,6): "
       my_guess = gets.chomp.scan(/\d/)[0,4].map(&:to_i)
       puts
       code_comparison = CodeCompareFeedback.new(my_guess, @code_maker_code)
       if code_comparison.correct_items_correct_position == my_guess.length
         puts
-        puts "You guessed the code, #{@code_maker_code}!"
+        puts "You guessed the code, #{@code_maker_code}, in #{guess_number + 1} tries!"
         puts
         exit
       end
-      puts "On guess number: #{guess + 1}, there are #{code_comparison.correct_items_correct_position} correct items in the correct position and there are #{code_comparison.correct_items_only} correct items NOT in the correct position"
+      puts "On guess number: #{guess_number + 1}, there are #{code_comparison.correct_items_correct_position} correct items in the correct position and there are #{code_comparison.correct_items_only} correct items NOT in the correct position"
       puts "My guess: #{my_guess}, Codemaker code: #{@code_maker_code} <----- For Debugging Only!"
       puts
     end
     puts
-    puts "I'm sorry, you did not guess the code, #{@code_maker_code}, within the allotted 12 tries."
+    puts "I'm sorry, you did not guess the code, #{@code_maker_code}, within the allotted #{@number_of_tries} tries."
   end
 
 end
