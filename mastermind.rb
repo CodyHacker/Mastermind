@@ -17,13 +17,13 @@ class CodeMaker
     @@the_code
   end
 
-  # def to_s
-  #   puts "Number of pins: #{@number_of_pins}, Number of colors possible per pin: #{@number_of_colors}"
-  # end
+  def to_s
+    puts "Number of pins: #{@number_of_pins}, Number of colors possible per pin: #{@number_of_colors}"
+  end
 
   private
   def random_color
-    rand(@number_of_colors)
+    rand(@number_of_colors)+1
   end
   
 end
@@ -48,23 +48,14 @@ class CodeCompareFeedback
   def correct_items_only
     array1, array2 = @codemaker_code.zip(@guessed_code).delete_if { |a, b| a == b }.transpose
 
-    # Thank you, Suslov from StackOverflow
-    array1.inject(0) do |count, (i)| 
-        if array2.include?(i)
-            count += 1
-            array2.delete_at(array2.index(i))
-        end
-        count
-    end
+    # Thank you, Suslov from StackOverflow, for this beautiful little bit
 
-
-
+    array1.select{|e| (index = array2.index(e) and array2.delete_at index)}.count
   end
 
   def to_s
     puts "CodeMaker Code: #{@codemaker_code}, CodeBreaker Code: #{@guessed_code}"
   end
-
 
 end
 
@@ -72,7 +63,7 @@ end
 CODE_MAKER_CODE = CodeMaker.new.make_code
 
 12.times do |guess|
-  print "Enter your guess (ex. 0,1,4,5):  "
+  print "Enter your guess (ex. 1,2,3,6):  "
   my_guess = gets.chomp.split(',').map(&:to_i)
   # puts my_guess
   # p my_guess
@@ -85,20 +76,11 @@ CODE_MAKER_CODE = CodeMaker.new.make_code
   end
   puts "On guess number: #{guess + 1}, there are #{code_comparison.correct_items_correct_position} correct items in the correct position and there are #{code_comparison.correct_items_only} correct items NOT in the correct position"
   puts "My guess: #{my_guess}, Codemaker code: #{CODE_MAKER_CODE} <----- For Debugging Only!"
+  puts
 end
 puts
 puts "I'm sorry, you did not guess the code, #{CODE_MAKER_CODE}, within the allotted 12 tries."
 
 
-# code_maker = CodeMaker.new.make_code
-#  code_guesser = CodeCompareFeedback.new([1,3,2,5],code_maker)
-# puts "correct items in correct positions #{code_guesser.correct_items_correct_position}"
-# puts "correct items/incorrect position: #{code_guesser.correct_items_only}"
-# puts code_guesser
-
-# code_guesser = CodeCompareFeedback.new([1,3,4,5],code_maker)
-# puts "correct items in correct positions #{code_guesser.correct_items_correct_position}"
-# puts "correct items/incorrect position: #{code_guesser.correct_items_only}"
-# puts code_guesser
 
 
