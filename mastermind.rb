@@ -2,19 +2,19 @@ class CodeMaker
   # CodeMaker creates the code. It can be called with number of pins and number of colors
   # but defaults to 4 pins, 6 colors, and currently allows for duplicates.
 
-  attr_writer  :number_of_pins, :number_of_colors
-  
+  attr_accessor  :number_of_pins, :number_of_colors
+
   def initialize(number_of_pins=4, number_of_colors=6)
     @number_of_pins = number_of_pins
     @number_of_colors = number_of_colors
-    @@the_code = []
+    @the_code = []
   end
 
   def make_code
     @number_of_pins.times do
-      @@the_code << random_color
+      @the_code << random_color
     end
-    @@the_code
+    @the_code
   end
 
   def to_s
@@ -25,7 +25,7 @@ class CodeMaker
   def random_color
     rand(@number_of_colors)+1
   end
-  
+
 end
 
 class CodeCompareFeedback
@@ -64,14 +64,21 @@ class HumanCodeBreaker
   attr_writer :number_of_tries
 
   def initialize(number_of_tries=12)
-    @code_maker_code = CodeMaker.new.make_code
+    @my_code_maker = CodeMaker.new
+    @code_maker_code = @my_code_maker.make_code
+    @number_of_colors = @my_code_maker.number_of_colors
+    @number_of_pins = @my_code_maker.number_of_pins
     @number_of_tries = number_of_tries
   end
 
   def play_game
+    puts "Code is #{@number_of_pins} digits long and consists of the digits 1 - #{@number_of_colors}"
     @number_of_tries.times do |guess_number|
-      print "Enter your guess (ex. 1,2,3,6): "
-      my_guess = gets.chomp.scan(/\d/)[0,4].map(&:to_i)
+      my_guess = ''
+      until my_guess.length == @number_of_pins
+        print 'Enter your guess: '
+        my_guess = gets.chomp.scan(/\d/)[0,@number_of_pins].map(&:to_i)
+      end
       puts
       code_comparison = CodeCompareFeedback.new(my_guess, @code_maker_code)
       if code_comparison.correct_items_correct_position == my_guess.length
