@@ -77,7 +77,7 @@ class HumanCodeBreaker
   def play_game
     welcome_the_player
     @number_of_tries.times do |guess_number|
-      @my_guess = get_the_guess
+      @my_guess = get_the_guess(guess_number)
       @code_comparison.guessed_code = @my_guess
       @code_comparison.correct_items_correct_position == @my_guess.length ? message_player_wins(guess_number) : message_guess_feedback(guess_number)
     end
@@ -99,7 +99,7 @@ class HumanCodeBreaker
   def message_guess_feedback(guess_number)
     puts
     puts "On try number: #{guess_number + 1}, there are #{@code_comparison.correct_items_correct_position} correct items in the correct position and there are #{@code_comparison.correct_items_only} correct items NOT in the correct position."
-    puts "My guess: #{@my_guess}, Codemaker code: #{@code_maker_code} <----- For Debugging Only!"
+    puts "My guess: #{@my_guess}, Codemaker code: #{@code_maker_code} <----- For Debugging Only!" if $DEBUG
     puts
   end
 
@@ -110,10 +110,10 @@ class HumanCodeBreaker
     exit
   end
 
-  def get_the_guess
+  def get_the_guess(guess_number)
     my_guess = ''
     until my_guess.length == @number_of_pins && my_guess.all? {|element| element.between?(1, @number_of_colors)}
-      print 'Enter your guess: '
+      print "Enter your guess ##{guess_number + 1}: "
       my_guess = gets.chomp.scan(/\d/)[0,@number_of_pins].map(&:to_i)
     end
     my_guess
