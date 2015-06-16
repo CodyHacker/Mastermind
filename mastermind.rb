@@ -87,7 +87,7 @@ class HumanPlayer
 
   private
   def welcome_the_player
-    puts 'Welcome to Mastermind!'
+    # puts 'Welcome to Mastermind!'
     puts "The Secret Code is #{@number_of_pins} digits long and consists of the digits 1 - #{@number_of_colors}. You have #{@number_of_tries} tries to try and guess it. Good luck!"
   end
 
@@ -121,9 +121,77 @@ class HumanPlayer
 
 end
 
-class ComputerPlayer
+class MasterMind
+
+  def initialize
+    greet_player
+    show_instructions if player_wants_instructions?
+    new_game = computer_as_codemaker? ? HumanPlayer.new : ComputerPlayer.new
+    # new_game = HumanPlayer.new
+    new_game.play_game
+  end
+
+  private
+
+  def greet_player
+    puts 'Welcome to Mastermind!'
+  end
+
+  def computer_as_codemaker?
+    b_or_m = ''
+    until b_or_m == 'b' || b_or_m == 'm'
+      print 'Would you like to be the codeMaker or codeBreaker (m/b)? '
+      begin
+        system("stty raw -echo")
+        b_or_m = STDIN.getc.downcase
+      ensure
+        system("stty -raw echo")
+      end
+      puts
+    end
+    b_or_m == 'b' ? true : false
+  end
+
+  def player_wants_instructions?
+    y_or_n = ''
+    until y_or_n == 'y' || y_or_n == 'n'
+      print 'Would you like instructions (y/n)? '
+      begin
+        system("stty raw -echo")
+        y_or_n = STDIN.getc.downcase
+      ensure
+        system("stty -raw echo")
+      end
+      puts
+    end
+    y_or_n == 'y' ? true : false
+  end
+
+  def show_instructions
+    puts
+    puts 'Mastermind is a code puzzle guessing game. You can choose to be the codebreaker, or the codemaker.'
+    puts 'If you choose to be the codebreaker, then the computer will choose a code that consists of 4 digits.'
+    puts 'Each digit can be from 1 to 6. Repeats are allowed. If you should choose to be the code maker, then'
+    puts 'you will choose the code in a similar manner, 4 digits long, each digit between 1 and 6, and the computer'
+    puts 'will guess. Now, the important thing is the feedback, otherwise it is just random luck. For example, if you'
+    puts 'choose to be the codebreaker, and you guess some 4 digit number, the computer will tell you how many numbers'
+    puts 'are correct, and in the correct position, as well as how many are correct, but in the wrong position.'
+    puts 'For example, if the random chosen code by the computer is (3,4,5,5) and your first guess is (1,5,4,5), the'
+    puts 'computer will report back that you have 1 number that is correct and in the correct position, and 2 numbers'
+    puts 'which are correct, but in the wrong position. Of course, when you play the codemaker and the computer guesses,'
+    puts 'you must report back in a similar manner, so the computer can formulate a guess. Good luck and have fun!'
+    puts
+  end
+    
 end
 
-new_game = HumanPlayer.new
-new_game.play_game
+class ComputerPlayer
+  def play_game
+  end
+end
+
+# new_game = HumanPlayer.new
+# new_game.play_game
+
+MasterMind.new
 
