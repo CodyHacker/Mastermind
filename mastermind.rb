@@ -48,7 +48,7 @@ class CodeCompareFeedback
   def correct_items_only
     array1, array2 = @codemaker_code.zip(@guessed_code).delete_if { |a, b| a == b }.transpose
 
-    # (Multiset.new(array1) & Multiset.new(array2)).size if multiset gem were to be used.
+    # (Multiset.new(array1) & Multiset.new(array2)).size 
 
     # Thank you, Suslov from StackOverflow, for this beautiful little bit (no gem reliance)
 
