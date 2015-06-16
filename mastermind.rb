@@ -61,7 +61,7 @@ class CodeCompareFeedback
 
 end
 
-class MasterMind
+class HumanPlayer
 
   attr_writer :number_of_tries
 
@@ -121,6 +121,9 @@ class MasterMind
 
 end
 
-new_game = MasterMind.new
+class ComputerPlayer
+end
+
+new_game = HumanPlayer.new
 new_game.play_game
 
