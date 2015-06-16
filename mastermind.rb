@@ -99,7 +99,7 @@ class HumanCodeBreaker
   def message_guess_feedback(guess_number)
     puts
     puts "On try number: #{guess_number + 1}, there are #{@code_comparison.correct_items_correct_position} correct items in the correct position and there are #{@code_comparison.correct_items_only} correct items NOT in the correct position."
-    puts "My guess: #{@my_guess}, Codemaker code: #{@code_maker_code} <----- For Debugging Only!" if $DEBUG
+    puts "My guess: #{@my_guess}, Codemaker code: #{@code_maker_code} <----- For Debugging Only!" if $VERBOSE # run with ruby -w mastermind.rb
     puts
   end
 
