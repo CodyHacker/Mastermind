@@ -61,7 +61,7 @@ class CodeCompareFeedback
 
 end
 
-class HumanCodeBreaker
+class MasterMind
 
   attr_writer :number_of_tries
 
@@ -88,7 +88,7 @@ class HumanCodeBreaker
   private
   def welcome_the_player
     puts 'Welcome to Mastermind!'
-    puts "The Secret Code is #{@number_of_pins} digits long and consists of the digits 1 - #{@number_of_colors}. You have #{@number_of_tries} tries to try to guess it. Good luck!"
+    puts "The Secret Code is #{@number_of_pins} digits long and consists of the digits 1 - #{@number_of_colors}. You have #{@number_of_tries} tries to try and guess it. Good luck!"
   end
 
   def message_player_loses
@@ -121,6 +121,6 @@ class HumanCodeBreaker
 
 end
 
-new_game = HumanCodeBreaker.new
+new_game = MasterMind.new
 new_game.play_game
 
