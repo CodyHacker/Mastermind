@@ -1,3 +1,33 @@
+module Chooser
+  private
+  def first_or_second_choice?(choice1, choice2, msg)
+    a_or_b = ''
+    until a_or_b == choice1 || a_or_b == choice2
+      print msg
+      begin
+        system("stty raw -echo")
+        a_or_b = STDIN.getc.downcase
+      ensure
+        system("stty -raw echo")
+      end
+      puts
+    end
+    a_or_b == choice1 ? true : false
+  end
+
+  def get_the_number(msg,guess_number=nil)
+    my_guess = ''
+    until my_guess.length == @number_of_pins && my_guess.all? {|element| element.between?(1, @number_of_colors)}
+      # print "Enter your guess ##{guess_number + 1}: "
+      print msg
+      my_guess = gets.chomp.scan(/\d/)[0,@number_of_pins].map(&:to_i)
+    end
+    my_guess
+  end
+
+
+end
+
 class CodeMaker
   # CodeMaker creates the code. It can be called with number of pins and number of colors
   # but defaults to 4 pins, 6 colors, and currently allows for duplicates.
@@ -62,6 +92,7 @@ class CodeCompareFeedback
 end
 
 class HumanPlayer
+  include Chooser
 
   attr_writer :number_of_tries
 
@@ -77,7 +108,7 @@ class HumanPlayer
   def play_game
     welcome_the_player
     @number_of_tries.times do |guess_number|
-      @my_guess = get_the_guess(guess_number)
+      @my_guess = get_the_number("Enter your guess ##{guess_number + 1}: ",guess_number)
       @code_comparison.guessed_code = @my_guess
       @code_comparison.correct_items_correct_position == @my_guess.length ? message_player_wins(guess_number) : message_guess_feedback(guess_number)
     end
@@ -87,7 +118,6 @@ class HumanPlayer
 
   private
   def welcome_the_player
-    # puts 'Welcome to Mastermind!'
     puts "The Secret Code is #{@number_of_pins} digits long and consists of the digits 1 - #{@number_of_colors}. You have #{@number_of_tries} tries to try and guess it. Good luck!"
   end
 
@@ -109,25 +139,14 @@ class HumanPlayer
     puts
     exit
   end
-
-  def get_the_guess(guess_number)
-    my_guess = ''
-    until my_guess.length == @number_of_pins && my_guess.all? {|element| element.between?(1, @number_of_colors)}
-      print "Enter your guess ##{guess_number + 1}: "
-      my_guess = gets.chomp.scan(/\d/)[0,@number_of_pins].map(&:to_i)
-    end
-    my_guess
-  end
-
 end
 
 class MasterMind
-
+  include Chooser
   def initialize
     greet_player
-    show_instructions if player_wants_instructions?
-    new_game = computer_as_codemaker? ? HumanPlayer.new : ComputerPlayer.new
-    # new_game = HumanPlayer.new
+    show_instructions if first_or_second_choice?('y','n','Would you like instructions (y/n)? ')
+    new_game = first_or_second_choice?('b','m','Would you like to be the codeMaker or codeBreaker (m/b)? ') ? HumanPlayer.new : ComputerPlayer.new
     new_game.play_game
   end
 
@@ -135,36 +154,6 @@ class MasterMind
 
   def greet_player
     puts 'Welcome to Mastermind!'
-  end
-
-  def computer_as_codemaker?
-    b_or_m = ''
-    until b_or_m == 'b' || b_or_m == 'm'
-      print 'Would you like to be the codeMaker or codeBreaker (m/b)? '
-      begin
-        system("stty raw -echo")
-        b_or_m = STDIN.getc.downcase
-      ensure
-        system("stty -raw echo")
-      end
-      puts
-    end
-    b_or_m == 'b' ? true : false
-  end
-
-  def player_wants_instructions?
-    y_or_n = ''
-    until y_or_n == 'y' || y_or_n == 'n'
-      print 'Would you like instructions (y/n)? '
-      begin
-        system("stty raw -echo")
-        y_or_n = STDIN.getc.downcase
-      ensure
-        system("stty -raw echo")
-      end
-      puts
-    end
-    y_or_n == 'y' ? true : false
   end
 
   def show_instructions
@@ -185,8 +174,25 @@ class MasterMind
     
 end
 
-class ComputerPlayer
+class ComputerPlayer < HumanPlayer
+  include Chooser
   def play_game
+    welcome_the_player
+    @code_maker_code = get_the_number('Enter your secret code:  ')
+    # @number_of_tries.times do |guess_number|
+    #   @my_guess = get_the_guess(guess_number)
+    #   @code_comparison.guessed_code = @my_guess
+    #   @code_comparison.correct_items_correct_position == @my_guess.length ? message_player_wins(guess_number) : message_guess_feedback(guess_number)
+    # end
+    # message_player_loses
+    puts "You chose: #{@code_maker_code} as the secret code"
+  end
+
+  private
+
+  def welcome_the_player
+    puts "The Secret Code is #{@number_of_pins} digits long and consists of the digits 1 - #{@number_of_colors}. The computer has #{@number_of_tries} tries to try and guess it."
+    puts "You will choose the code based on this criteria and provide feedback and the computer will attempt to guess it."
   end
 end
 
