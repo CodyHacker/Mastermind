@@ -37,10 +37,10 @@ class CodeMaker
   def initialize(number_of_pins=4, number_of_colors=6)
     @number_of_pins = number_of_pins
     @number_of_colors = number_of_colors
-    @the_code = []
   end
 
   def make_code
+    @the_code = []
     @number_of_pins.times do
       @the_code << random_color
     end
@@ -146,7 +146,7 @@ class MasterMind
   def initialize
     greet_player
     show_instructions if first_or_second_choice?('y','n','Would you like instructions (y/n)? ')
-    new_game = first_or_second_choice?('b','m','Would you like to be the codeMaker or codeBreaker (m/b)? ') ? HumanPlayer.new : ComputerPlayer.new
+    new_game = first_or_second_choice?('b','m','Would you like to be the codeMaker or codeBreaker (m/b)? ') ? HumanPlayer.new : ComputerPlayer.new(10000)
     new_game.play_game
   end
 
@@ -178,14 +178,19 @@ class ComputerPlayer < HumanPlayer
   include Chooser
   def play_game
     welcome_the_player
-    @code_maker_code = get_the_number('Enter your secret code:  ')
-    # @number_of_tries.times do |guess_number|
-    #   @my_guess = get_the_guess(guess_number)
-    #   @code_comparison.guessed_code = @my_guess
-    #   @code_comparison.correct_items_correct_position == @my_guess.length ? message_player_wins(guess_number) : message_guess_feedback(guess_number)
-    # end
-    # message_player_loses
-    puts "You chose: #{@code_maker_code} as the secret code"
+    @human_chosen_secret_code = get_the_number('Enter your secret code:  ')
+    puts "You chose: #{@human_chosen_secret_code} as the secret code. The computer will now try to guess it in #{@number_of_tries} tries"
+    @number_of_tries.times do |guess_number|
+      puts "On try #{guess_number+1}, computer guessed: #{@code_maker_code}"
+      if @human_chosen_secret_code == @code_maker_code
+        puts "Computer guessed correctly and wins!"
+        exit
+      else
+        @code_maker_code = @my_code_maker.make_code
+      end
+    end
+    puts "Computer did not correctly guess the code"
+    
   end
 
   private
@@ -195,9 +200,6 @@ class ComputerPlayer < HumanPlayer
     puts "You will choose the code based on this criteria and provide feedback and the computer will attempt to guess it."
   end
 end
-
-# new_game = HumanPlayer.new
-# new_game.play_game
 
 MasterMind.new
 
